@@ -1,0 +1,1999 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBT Literasi Bahasa Indonesia Kelas X - Teks Laporan Hasil Observasi</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans min-h-screen flex flex-col justify-between text-slate-800">
+
+    <!-- HEADER / NAVBAR -->
+    <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-laptop-code text-2xl text-indigo-400"></i>
+                <div>
+                    <h1 class="font-bold text-lg md:text-xl leading-tight">CBT Literasi Bahasa Indonesia</h1>
+                    <p class="text-xs text-indigo-200">Bab I: Teks Laporan Hasil Observasi (Buku Siswa Kelas X Edisi Revisi)</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <!-- Mode Selector Toggle -->
+                <div class="bg-indigo-950 p-1 rounded-lg border border-indigo-700 flex items-center text-xs">
+                    <button id="btn-mode-ujian" onclick="switchMode('ujian')" class="px-2.5 py-1 rounded-md font-medium transition bg-indigo-600 text-white shadow">
+                        <i class="fa-solid fa-graduation-cap mr-1"></i> Mode Ujian
+                    </button>
+                    <button id="btn-mode-latihan" onclick="switchMode('latihan')" class="px-2.5 py-1 rounded-md font-medium transition text-indigo-300 hover:text-white">
+                        <i class="fa-solid fa-bolt mr-1"></i> Latihan (Instant)
+                    </button>
+                </div>
+                <div class="bg-indigo-950 px-3 py-1.5 rounded-lg border border-indigo-700 flex items-center space-x-2">
+                    <i class="fa-regular fa-clock text-amber-400"></i>
+                    <span id="timer" class="font-mono font-bold text-base md:text-lg text-amber-300">120:00</span>
+                </div>
+                <button onclick="openConfirmModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-1.5 rounded-lg font-medium text-sm transition shadow">
+                    <i class="fa-solid fa-paper-plane mr-1"></i> Selesai Ujian
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow grid grid-cols-1 lg:grid-cols-4 gap-6">
+        
+        <!-- QUESTION & OPTION AREA (3 COLS) -->
+        <section class="lg:col-span-3 flex flex-col bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden min-h-[550px]">
+            <!-- Question Header -->
+            <div class="bg-slate-50 border-b border-slate-200 px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <span class="bg-indigo-600 text-white text-sm font-bold px-3 py-1 rounded-md" id="q-number-badge">Soal #1</span>
+                    <span class="text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-200 text-slate-700" id="q-type-badge">Pilihan Ganda</span>
+                </div>
+                <label class="flex items-center space-x-2 cursor-pointer text-sm font-medium text-amber-600 hover:text-amber-700 select-none">
+                    <input type="checkbox" id="flag-checkbox" onchange="toggleFlag()" class="w-4 h-4 text-amber-500 rounded focus:ring-amber-400">
+                    <span><i class="fa-solid fa-bookmark"></i> Ragu-ragu</span>
+                </label>
+            </div>
+
+            <!-- Question Body -->
+            <div class="p-6 flex-grow overflow-y-auto custom-scrollbar">
+                <div id="question-text" class="text-slate-800 text-base md:text-lg leading-relaxed mb-6 font-medium">
+                    <!-- Soal dimuat lewat JS -->
+                </div>
+
+                <!-- Sub-text / Context Box if needed -->
+                <div id="context-box" class="hidden bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6 rounded-r text-sm text-slate-700 leading-relaxed italic">
+                </div>
+
+                <!-- Options List -->
+                <div id="options-container" class="space-y-3">
+                    <!-- Opsi jawaban dimuat lewat JS -->
+                </div>
+
+                <!-- Instant Feedback Banner for Latihan Mode -->
+                <div id="instant-feedback" class="hidden mt-4 p-3 rounded-lg border text-sm flex items-center space-x-2 font-medium">
+                </div>
+
+                <!-- Pembahasan -->
+                <div id="explanation-box" class="hidden mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                    <h4 class="font-bold text-emerald-800 flex items-center mb-2">
+                        <i class="fa-solid fa-circle-check mr-2"></i> Kunci & Pembahasan:
+                    </h4>
+                    <p id="explanation-text" class="text-sm text-emerald-900 leading-relaxed"></p>
+                </div>
+            </div>
+
+            <!-- Navigation Footer -->
+            <div class="bg-slate-50 border-t border-slate-200 px-6 py-4 flex justify-between items-center">
+                <button onclick="prevQuestion()" id="btn-prev" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg font-medium text-sm transition disabled:opacity-50">
+                    <i class="fa-solid fa-chevron-left mr-1"></i> Sebelumnya
+                </button>
+                <div class="text-xs text-slate-500">
+                    Terjawab: <span id="answered-count" class="font-bold text-slate-700">0</span> / 100
+                </div>
+                <button onclick="nextQuestion()" id="btn-next" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium text-sm transition">
+                    Berikutnya <i class="fa-solid fa-chevron-right ml-1"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- QUESTION PALETTE / NAVIGATION SIDEBAR (1 COL) -->
+        <aside class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col h-full max-h-[650px]">
+            <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wide border-b pb-3 mb-3 flex justify-between items-center">
+                <span><i class="fa-solid fa-th-large mr-1 text-indigo-600"></i> Navigasi Soal</span>
+                <span class="text-xs text-slate-500 font-normal">100 Soal</span>
+            </h3>
+
+            <!-- Filter tabs -->
+            <div class="flex text-xs border-b pb-2 mb-3 space-x-1">
+                <button onclick="filterPalette('all')" class="px-2 py-1 rounded bg-slate-200 font-medium">Semua</button>
+                <button onclick="filterPalette('unanswered')" class="px-2 py-1 rounded hover:bg-slate-100 text-slate-600">Belum</button>
+                <button onclick="filterPalette('flagged')" class="px-2 py-1 rounded hover:bg-slate-100 text-amber-600">Ragu</button>
+            </div>
+
+            <!-- Grid palette -->
+            <div id="palette-grid" class="grid grid-cols-5 gap-2 overflow-y-auto custom-scrollbar flex-grow pr-1">
+                <!-- Grid item 1-100 di-generate via JS -->
+            </div>
+
+            <!-- Legend -->
+            <div class="border-t pt-3 mt-3 text-xs space-y-1.5 text-slate-600">
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded bg-indigo-600 inline-block"></span>
+                    <span>Sudah Dijawab</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded bg-amber-400 inline-block"></span>
+                    <span>Ragu-ragu</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded bg-slate-100 border border-slate-300 inline-block"></span>
+                    <span>Belum Dijawab</span>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-800 text-slate-400 text-xs py-3 text-center border-t border-slate-700">
+        Bank Soal Literasi Bahasa Indonesia Kelas X SMA/MA/SMK — Berdasarkan Buku Teks Kurikulum Merdeka (Edisi Revisi 2023)
+    </footer>
+
+    <!-- RESULT MODAL -->
+    <div id="result-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-6 text-center animate-fade-in max-h-[90vh] flex flex-col">
+            <div class="flex-shrink-0">
+                <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800 mb-1">Hasil & Evaluasi Ujian Literasi LHO</h2>
+                <p class="text-slate-500 text-xs mb-4">Pembelajaran Bab 1 Bahasa Indonesia Kelas X</p>
+
+                <!-- Navigation Tabs in Modal -->
+                <div class="flex border-b border-slate-200 mb-4 justify-center space-x-4">
+                    <button id="tab-btn-summary" onclick="switchResultTab('summary')" class="pb-2 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600">
+                        <i class="fa-solid fa-chart-pie mr-1"></i> Ringkasan Skor
+                    </button>
+                    <button id="tab-btn-detail" onclick="switchResultTab('detail')" class="pb-2 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-indigo-600">
+                        <i class="fa-solid fa-list-check mr-1"></i> Detail Jawaban (100 Soal)
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex-grow overflow-y-auto custom-scrollbar px-1">
+                <!-- TAB 1: SUMMARY -->
+                <div id="tab-content-summary" class="space-y-4">
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="bg-slate-50 p-3 rounded-xl border">
+                            <div class="text-xs text-slate-500 uppercase font-bold">Skor Akhir</div>
+                            <div id="score-val" class="text-3xl font-black text-indigo-600 mt-1">0</div>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border">
+                            <div class="text-xs text-slate-500 uppercase font-bold">Benar</div>
+                            <div id="correct-val" class="text-3xl font-black text-emerald-600 mt-1">0</div>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border">
+                            <div class="text-xs text-slate-500 uppercase font-bold">Salah / Kosong</div>
+                            <div id="wrong-val" class="text-3xl font-black text-rose-600 mt-1">0</div>
+                        </div>
+                    </div>
+
+                    <div class="text-left bg-slate-50 p-4 rounded-xl border text-xs space-y-2">
+                        <div class="flex justify-between"><span>PG Sederhana (50 Soal):</span><b id="score-pg">0/50</b></div>
+                        <div class="flex justify-between"><span>PG Kompleks (30 Soal):</span><b id="score-kompleks">0/30</b></div>
+                        <div class="flex justify-between"><span>Benar - Salah (20 Soal):</span><b id="score-bs">0/20</b></div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: DETAILED ANSWER SHEET REVIEW -->
+                <div id="tab-content-detail" class="hidden space-y-3 text-left">
+                    <div class="flex items-center justify-between bg-slate-100 p-2 rounded-lg text-xs">
+                        <span class="font-semibold text-slate-700">Filter Jawaban:</span>
+                        <div class="space-x-1">
+                            <button onclick="filterDetailResult('all')" class="px-2 py-0.5 rounded bg-white shadow-sm font-medium">Semua</button>
+                            <button onclick="filterDetailResult('correct')" class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-medium">Benar</button>
+                            <button onclick="filterDetailResult('wrong')" class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-medium">Salah/Kosong</button>
+                        </div>
+                    </div>
+                    <div id="detailed-answers-list" class="space-y-2">
+                        <!-- Dynamic content generated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex space-x-3 mt-4 pt-3 border-t flex-shrink-0">
+                <button onclick="reviewAnswers()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-xl transition text-sm">
+                    <i class="fa-solid fa-magnifying-glass mr-1"></i> Tinjau Pembahasan Soal
+                </button>
+                <button onclick="location.reload()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium px-4 py-2.5 rounded-xl transition text-sm">
+                    <i class="fa-solid fa-rotate-right mr-1"></i> Ulangi Test
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRMATION MODAL -->
+    <div id="confirm-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 text-center">
+            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-2">Konfirmasi Selesai Ujian</h3>
+            <p id="confirm-modal-text" class="text-slate-600 text-sm mb-6 leading-relaxed">
+                Apakah Anda yakin ingin mengakhiri ujian ini?
+            </p>
+            <div class="flex space-x-3">
+                <button onclick="closeConfirmModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2 rounded-xl transition text-sm">
+                    Batal
+                </button>
+                <button onclick="executeSubmitQuiz()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-xl transition text-sm shadow">
+                    Ya, Kirim Jawaban
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TIME UP MODAL -->
+    <div id="timeup-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 text-center">
+            <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+                <i class="fa-solid fa-hourglass-end"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-2">Waktu Habis!</h3>
+            <p class="text-slate-600 text-sm mb-6">
+                Waktu pengerjaan ujian telah selesai. Jawaban Anda akan langsung diperiksa.
+            </p>
+            <button onclick="executeSubmitQuiz()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-xl transition text-sm shadow">
+                Lihat Hasil Ujian
+            </button>
+        </div>
+    </div>
+
+    <!-- JS LOGIC AND QUESTION DATA -->
+    <script>
+        // FULL QUESTION DATA BANK (100 SOAL LHO KELAS X)
+        const questionsData = [
+            // --- SECTION 1: PILIHAN GANDA SEDERHANA (1-50) ---
+            {
+                id: 1,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Apa tujuan utama dari teks Laporan Hasil Observasi (LHO)?",
+                options: [
+                    "A. Mengajak pembaca untuk melakukan kegiatan lingkungan",
+                    "B. Menyajikan fakta secara sistematis berdasarkan pengamatan objektif",
+                    "C. Menceritakan pengisi cerita rekaan yang menghibur",
+                    "D. Memberikan petunjuk langkah demi langkah dalam membuat karya",
+                    "E. Menyampaikan argumen personal pengamat tentang fenomena alam"
+                ],
+                answer: 1,
+                explanation: "Teks Laporan Hasil Observasi (LHO) bertujuan memberikan informasi faktual secara sistematis dan objektif berdasarkan hasil pengamatan langsung."
+            },
+            {
+                id: 2,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Struktur teks Laporan Hasil Observasi secara sistematis terdiri atas...",
+                options: [
+                    "A. Orientasi, Komplikasi, Resolusi",
+                    "B. Pernyataan Umum/Klasifikasi, Deskripsi Bagian, Deskripsi Manfaat",
+                    "C. Tesis, Argumentasi, Penegasan Ulang",
+                    "D. Identifikasi, Deskripsi Bagian, Penutup",
+                    "E. Langkah 1, Langkah 2, Hasil Pengujian"
+                ],
+                answer: 1,
+                explanation: "Struktur umum teks LHO terdiri atas: 1) Pernyataan Umum / Klasifikasi, 2) Deskripsi Bagian, dan 3) Deskripsi Manfaat / Simpulan."
+            },
+            {
+                id: 3,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Ciri utama dari penyampaian informasi dalam teks LHO adalah bersifat...",
+                options: [
+                    "A. Subjektif dan imajinatif",
+                    "B. Objektif dan faktual",
+                    "C. Emosional dan persuasif",
+                    "D. Fiktif dan naratif",
+                    "E. Hipotetis dan eksperimental"
+                ],
+                answer: 1,
+                explanation: "Objektif artinya sesuai fakta di lapangan tanpa dipengaruhi pendapat pribadi atau prasangka penulis."
+            },
+            {
+                id: 4,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Perhatikan kalimat berikut: 'Belalang anggrek (Hymenopus coronatus) merupakan salah satu jenis belalang sembah yang memiliki pemikat visual menyerupai mahkota bunga anggrek.' Kalimat tersebut tergolong sebagai...",
+                options: [
+                    "A. Kalimat deskripsi",
+                    "B. Kalimat opini",
+                    "C. Kalimat definisi",
+                    "D. Kalimat instruksi",
+                    "E. Kalimat persetujuan"
+                ],
+                answer: 2,
+                explanation: "Kalimat tersebut menggunakan kata penanda 'merupakan' yang menjelaskan pengertian umum/konsep dasar, sehingga tergolong kalimat definisi."
+            },
+            {
+                id: 5,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Kalimat berikut yang merupakan contoh 'kalimat deskripsi' adalah...",
+                options: [
+                    "A. Kunang-kunang adalah serangga yang dapat mengeluarkan cahaya pada malam hari.",
+                    "B. Sayap belakang belalang ini berwarna pink cerah dengan bintik hitam melingkar di tepinya.",
+                    "C. Observasi adalah metode pengumpulan data empiris di lapangan.",
+                    "D. Wayang merupakan seni pertunjukan tradisional Indonesia yang diakui UNESCO.",
+                    "E. Belalang sembah masuk dalam ordo Mantodea."
+                ],
+                answer: 1,
+                explanation: "Kalimat B menggambarkan ciri fisik objek secara rinci (warna, pola bintik) sehingga pembaca seolah melihat bentuk konkretnya."
+            },
+            {
+                id: 6,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Mengapa teks Laporan Hasil Observasi harus ditulis berdasarkan fakta?",
+                options: [
+                    "A. Agar teks terlihat panjang dan rumit",
+                    "B. Agar kebenaran isi laporan dapat dipertanggungjawabkan secara ilmiah",
+                    "C. Agar pembaca terpengaruh oleh pendapat pribadi penulis",
+                    "D. Untuk memenuhi kuota kata pada penulisan karya ilmiah",
+                    "E. Agar cerita lebih menarik dan bernilai seni tinggi"
+                ],
+                answer: 1,
+                explanation: "Kebenaran ilmiah dan objektivitas mengikat teks LHO sehingga informasi yang diberikan teruji dan dapat dipertanggungjawabkan."
+            },
+            {
+                id: 7,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Istilah teknis biologis untuk sarung telur yang dihasilkan oleh belalang sembah adalah...",
+                options: [
+                    "A. Larva",
+                    "B. Nimfa",
+                    "C. Ooteka",
+                    "D. Elytra",
+                    "E. Pupa"
+                ],
+                answer: 2,
+                explanation: "Ooteka adalah kantong/struktur telur berbusa yang mengeras yang diproduksi serangga seperti belalang sembah dan kecoak."
+            },
+            {
+                id: 8,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Cahaya dingin yang dihasilkan oleh kunang-kunang tanpa memancarkan panas disebut reaksi...",
+                options: [
+                    "A. Fotosintesis",
+                    "B. Bioluminesens",
+                    "C. Metamorfosis",
+                    "D. Oksidasi thermal",
+                    "E. Fluoresensi sintesis"
+                ],
+                answer: 1,
+                explanation: "Bioluminesens adalah emisi cahaya yang dihasilkan oleh organisme hidup sebagai hasil reaksi kimia (luciferin & luciferase)."
+            },
+            {
+                id: 9,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Penggunaan imbuhan di- sebagai prefiks (awalan kata kerja) yang tepat terdapat pada kata...",
+                options: [
+                    "A. di halaman",
+                    "B. di makan",
+                    "C. ditulis",
+                    "D. di sekolah",
+                    "E. di atas"
+                ],
+                answer: 2,
+                explanation: "Prefiks di- pada kata kerja pasif ditulis serangkai ('ditulis'), sedangkan kata depan di- penanda tempat ditulis terpisah ('di halaman')."
+            },
+            {
+                id: 10,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Penulisan kata depan di- yang benar menunjukkan penanda tempat adalah...",
+                options: [
+                    "A. dikumpulkan",
+                    "B. diamati",
+                    "C. di hutan mangrovis",
+                    "D. dilaporkan",
+                    "E. diklasifikasikan"
+                ],
+                answer: 2,
+                explanation: "Kata depan (preposisi) di yang menunjukkan lokasi atau tempat harus ditulis terpisah dari kata yang mengikutinya."
+            },
+            {
+                id: 11,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Fungsi utama dari bagian 'Deskripsi Manfaat' dalam teks LHO adalah...",
+                options: [
+                    "A. Menjelaskan Klasifikasi ilmiah objek pengamatan",
+                    "B. Menjelaskan faedah, kegunaan, atau peran objek bagi manusia dan ekosistem",
+                    "C. Menceritakan kronologi proses dilakukannya pengamatan",
+                    "D. Menyampaikan saran kritik kepada pengelola objek",
+                    "E. Menyebutkan latar belakang pendidikan observer"
+                ],
+                answer: 1,
+                explanation: "Deskripsi manfaat memaparkan kegunaan, fungsi ekologis, maupun peran penting objek bagi kehidupan."
+            },
+            {
+                id: 12,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Manakah di bawah ini yang tergolong kata kerja material (verba aktif fisik)?",
+                options: [
+                    "A. Merupakan",
+                    "B. Adalah",
+                    "C. Mengunyah",
+                    "D. Yaitu",
+                    "E. Termasuk"
+                ],
+                answer: 2,
+                explanation: "Kata kerja material adalah verba yang menunjukkan tindakan atau aktivitas fisik yang nyata, seperti 'mengunyah'."
+            },
+            {
+                id: 13,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Ciri serangga yang tergolong bioindikator kesehatan lingkungan adalah...",
+                options: [
+                    "A. Hanya hidup di pemukiman padat penduduk",
+                    "B. Kehadirannya sensitif terhadap pencemaran air/udara",
+                    "C. Berukuran sangat besar dan predator puncak",
+                    "D. Tidak membutuhkan sumber air bersih",
+                    "E. Mampu bertahan hidup dalam limbah beracun"
+                ],
+                answer: 1,
+                explanation: "Bioindikator seperti kunang-kunang atau capung sangat sensitif terhadap polusi, sehingga tingkat populasinya mencerminkan kualitas lingkungan."
+            },
+            {
+                id: 14,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Dalam penulisan kutipan tidak langsung pada laporan ilmiah, tindakan yang benar adalah...",
+                options: [
+                    "A. Mengutip seluruh paragraf tanpa mengubah satu kata pun tanpa tanda petik",
+                    "B. Mengubah susunan kalimat dengan bahasa sendiri tanpa merubah makna (parafase) dan menyertakan sumber",
+                    "C. Menyalin klausa utama saja lalu mengakuinya sebagai ide pribadi",
+                    "D. Mengabaikan nama pengarang asli",
+                    "E. Menambahkan opini subjektif di tengah-tengah kutipan"
+                ],
+                answer: 1,
+                explanation: "Kutipan tidak langsung dilakukan dengan cara memparafrasekan ide penulis asli menggunakan gaya bahasa sendiri serta mencantumkan sumber rujukan."
+            },
+            {
+                id: 15,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Berdasarkan format Chicago Manual of Style (CMS 17th), urutan penulisan daftar pustaka dari buku yang tepat adalah...",
+                options: [
+                    "A. Judul Buku. Nama Pengarang. Kota: Penerbit, Tahun.",
+                    "B. Nama Belakang, Nama Depan. Tahun. Judul Buku. Kota Terbit: Penerbit.",
+                    "C. Nama Belakang, Nama Depan. Judul Buku. Kota Terbit: Penerbit, Tahun Terbit.",
+                    "D. Penerbit, Tahun. Nama Pengarang. Judul Buku.",
+                    "E. Judul Buku. Tahun. Penerbit. Nama Pengarang."
+                ],
+                answer: 2,
+                explanation: "Format CMS 17th baku: Nama Belakang, Nama Depan. Judul Buku (Cetak Miring). Kota Terbit: Penerbit, Tahun."
+            },
+            {
+                id: 16,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Bacalah teks berikut: 'Pohon Tabebuya (Handroanthus chrysanthus) memiliki bunga berbentuk terompet yang mekar secara masal pada awal musim kemarau.' Paragraf tersebut termasuk bagian...",
+                options: [
+                    "A. Deskripsi Manfaat",
+                    "B. Pernyataan Umum / Definisi",
+                    "C. Penutup dan Rekomendasi",
+                    "D. Orientasi Naratif",
+                    "E. Komplikasi"
+                ],
+                answer: 1,
+                explanation: "Paragraf pembuka memuat nama latin dan pengertian/gambaran umum objek, yang merupakan struktur Pernyataan Umum."
+            },
+            {
+                id: 17,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Salah satu perbedaan utama antara teks Eksplanasi dan teks Laporan Hasil Observasi adalah...",
+                options: [
+                    "A. LHO memuat langkah kerja eksperimen, Eksplanasi memuat dongeng",
+                    "B. LHO berfokus pada gambaran/klasifikasi faktual objek, Eksplanasi berfokus pada proses kausalitas terjadinya fenomena",
+                    "C. LHO berisi opini, Eksplanasi berisi cerita rekaan",
+                    "D. LHO menggunakan bahasa fiktif, Eksplanasi ilmiah",
+                    "E. LHO tidak butuh pengamatan, Eksplanasi wajib observasi lapangan"
+                ],
+                answer: 1,
+                explanation: "LHO mengamati ciri fisik dan klasifikasi objek, sedangkan eksplanasi menjelaskan proses sebab-akibat (kausalitas) terjadinya suatu peristiwa."
+            },
+            {
+                id: 18,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Pasangan kata berimbuhan di- dan kata depan di- yang semuanya benar penulisannya adalah...",
+                options: [
+                    "A. dimakan, di hutan",
+                    "B. di makan, dihutan",
+                    "C. dimakan, dihutan",
+                    "D. di makan, di hutan",
+                    "E. dimakan , di-hutan"
+                ],
+                answer: 0,
+                explanation: "'dimakan' (kata kerja pasif, disambung), 'di hutan' (kata depan tempat, dipisah)."
+            },
+            {
+                id: 19,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Perhatikan kalimat: 'Mata majemuk pada belalang anggrek terdiri dari ribuan lensa kecil yang sensitif terhadap gerakan.' Kata teknis dalam kalimat tersebut adalah...",
+                options: [
+                    "A. Belalang",
+                    "B. Mata majemuk",
+                    "C. Gerakan",
+                    "D. Kecil",
+                    "E. Terdiri"
+                ],
+                answer: 1,
+                explanation: "'Mata majemuk' (compound eye) merupakan istilah ilmiah/teknis biologi untuk struktur mata serangga."
+            },
+            {
+                id: 20,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Informasi yang bersifat objektif dalam LHO tidak boleh memuat...",
+                options: [
+                    "A. Angka dan data kuantitatif",
+                    "B. Nama latin ilmiah",
+                    "C. Prasangka dan opini emosional penulis",
+                    "D. Hasil dokumentasi pengamatan",
+                    "E. Ciri-ciri fisik spesifik objek"
+                ],
+                answer: 2,
+                explanation: "Informasi LHO harus netral dan terbebas dari opini atau perasaan subjektif penulis."
+            },
+            // Soal 21-50 (Melengkapi PG 1-50)
+            {
+                id: 21,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Taman Nasional Lorentz terletak di provinsi...",
+                options: ["A. Kalimantan Timur", "B. Papua", "C. Sulawesi Selatan", "D. Nusa Tenggara Timur", "E. Maluku"],
+                answer: 1,
+                explanation: "Taman Nasional Lorentz merupakan kawasan konservasi terbesar di Asia Tenggara yang terletak di Papua."
+            },
+            {
+                id: 22,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Kalimat yang mengandung verba keadaan adalah...",
+                options: [
+                    "A. Burung cendrawasih terbang tinggi.",
+                    "B. Belalang hinggap di dedaunan.",
+                    "C. Kunang-kunang tergolong hewan nocturnal.",
+                    "D. Peneliti mencatat suhu udara.",
+                    "E. Pohon itu tumbuh subur."
+                ],
+                answer: 2,
+                explanation: "'Tergolong' menjelaskan status atau keadaan pengklasifikasian objek."
+            },
+            {
+                id: 23,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Untuk mengubah laporan hasil observasi menjadi format komik edukatif, hal utama yang perlu disesuaikan adalah...",
+                options: [
+                    "A. Menghilangkan semua fakta ilmiah",
+                    "B. Mengubah narasi panjang menjadi dialog visual dan ilustrasi menarik",
+                    "C. Mengubah teks fakta menjadi teks fiksi fantasi penuh sihir",
+                    "D. Mengganti nama latin dengan nama buatan",
+                    "E. Menghilangkan gambar dan menambah paragraf"
+                ],
+                answer: 1,
+                explanation: "Mengubah teks ke media komik memerlukan adaptasi narasi fakta menjadi dialog antarkarakter dan penyampaian pesan visual."
+            },
+            {
+                id: 24,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Manakah penyulihan kata (sinonim) yang tepat untuk kata 'observasi'?",
+                options: ["A. Percobaan", "B. Pengamatan", "C. Pembuktian", "D. Pengujian", "E. Pemikiran"],
+                answer: 1,
+                explanation: "Observasi secara terminologi sama artinya dengan pengamatan secara cermat."
+            },
+            {
+                id: 25,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Bentuk metamorfosis tidak sempurna pada serangga melewati tahapan...",
+                options: [
+                    "A. Telur - Larva - Pupa - Imago",
+                    "B. Telur - Nimfa - Imago",
+                    "C. Nimfa - Telur - Pupa",
+                    "D. Telur - Pupa - Imago",
+                    "E. Larva - Nimfa - Dewasa"
+                ],
+                answer: 1,
+                explanation: "Metamorfosis tidak sempurna (hemimetabola) tidak melewati fase pupa/kepompong, melainkan langsung dari Telur ke Nimfa lalu Imago (dewasa)."
+            },
+            {
+                id: 26,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Fungsi utama dari kalimat definisi pada teks LHO adalah...",
+                options: [
+                    "A. Menguraikan keindahan visual objek",
+                    "B. Memberikan batasan pengertian konsep secara jelas bagi pembaca",
+                    "C. Menyimpulkan isi laporan di paragraf terakhir",
+                    "D. Menyampaikan kelemahan objek",
+                    "E. Menjelaskan urutan kronologi waktu"
+                ],
+                answer: 1,
+                explanation: "Kalimat definisi memberikan batasan atau batasan pengertian yang meletakkan dasar pemahaman bagi pembaca."
+            },
+            {
+                id: 27,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Teks LHO disusun dengan urutan logis dari umum ke khusus. Pola pengembangan ini disebut...",
+                options: ["A. Induktif", "B. Deduktif", "C. Kronologis", "D. Kausalitas", "E. Komparatif"],
+                answer: 1,
+                explanation: "Pola deduktif diawali dari pernyataan umum/luas lalu diikuti penjelasan rinci dan khusus pada deskripsi bagian."
+            },
+            {
+                id: 28,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Di bawah ini kata yang bukan termasuk istilah teknis biologi adalah...",
+                options: ["A. Ekosistem", "B. Habitat", "C. Fotosintesis", "D. Investasi", "E. Klorofil"],
+                answer: 3,
+                explanation: "'Investasi' adalah istilah dalam bidang ekonomi/keuangan, bukan biologi."
+            },
+            {
+                id: 29,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Penulisan judul teks LHO yang tepat sesuai PUEBI/EYD adalah...",
+                options: [
+                    "A. laporan Hasil observasi Hutan Mangrove",
+                    "B. Laporan Hasil Observasi Hutan Mangrove di pesisir jawa",
+                    "C. Laporan Hasil Observasi Hutan Mangrove di Pesisir Jawa",
+                    "D. LAPORAN HASIL OBSERVASI Hutan mangrove",
+                    "E. Laporan hasil observasi hutan mangrove"
+                ],
+                answer: 2,
+                explanation: "Setiap kata diawali huruf kapital kecuali kata hubung/kata depan (seperti 'di') yang tidak berada di posisi awal."
+            },
+            {
+                id: 30,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Tanda baca yang digunakan untuk mengapit nama latin spesifik biologis dalam teks adalah...",
+                options: ["A. Tanda petik tunggal ('')", "B. Tanda kurung ( ( ) )", "C. Tanda hubung (-)", "D. Tanda titik koma (;)", "E. Tanda petik ganda (\"\")"],
+                answer: 1,
+                explanation: "Nama latin atau ilmiah biasanya ditulis miring dan ditempatkan di dalam tanda kurung setelah nama lokalnya."
+            },
+            {
+                id: 31,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Belalang sembah memanfaatkan bentuk tubuhnya yang mirip bunga untuk teknik pemangsaan yang disebut...",
+                options: ["A. Kamuflase / Mimikri agresif", "B. Autotomi", "C. Hibernasi", "D. Ekolokasi", "E. Simbiosis parasitik"],
+                answer: 0,
+                explanation: "Mimikri agresif adalah kemampuan predator menyamar menyerupai objek tak berbahaya (bunga) untuk memikat mangsa."
+            },
+            {
+                id: 32,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Manakah yang merupakan data kuantitatif dalam laporan observasi?",
+                options: [
+                    "A. Bunga tabebuya tampak sangat indah mempesona.",
+                    "B. Panjang tubuh kunang-kunang jantan berkisar antara 10 hingga 15 millimeter.",
+                    "C. Bau busuk bunga bangkai amat menusuk hidung.",
+                    "D. Daun tanaman tersebut terasa halus saat disentuh.",
+                    "E. Suasana hutan sangat sepi di malam hari."
+                ],
+                answer: 1,
+                explanation: "Data kuantitatif ditunjukkan oleh angka terukur pasti (10 hingga 15 millimeter)."
+            },
+            {
+                id: 33,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Tujuan utama menyajikan laporan hasil observasi dalam bentuk infografis adalah...",
+                options: [
+                    "A. Menyembunyikan data faktual",
+                    "B. Menyampaikan poin-poin data fakta secara visual, cepat, dan menarik dipahami",
+                    "C. Memperbanyak halaman teks laporan",
+                    "D. Mengganti bahasa Indonesia dengan simbol khusus",
+                    "E. Menghilangkan bagian deskripsi manfaat"
+                ],
+                answer: 1,
+                explanation: "Infografis mengombinasikan visual grafis dan ringkasan data agar pembaca dapat mencerna fakta ilmiah dengan cepat."
+            },
+            {
+                id: 34,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Teks LHO harus disusun secara berkesinambungan dan padu. Kepaduan antarkalimat dalam paragraf disebut...",
+                options: ["A. Kohesi dan Koherensi", "B. Asosiasi dan Dissosiasi", "C. Konjungsi dan Disjungsi", "D. Komplikasi dan Resolusi", "E. Integrasi dan Diferensiasi"],
+                answer: 0,
+                explanation: "Kohesi (keterikatan bentuk/kebahasaan) dan koherensi (keterikatan makna) menciptakan paragraf yang padu."
+            },
+            {
+                id: 35,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Manakah kalimat di bawah ini yang paling objektif?",
+                options: [
+                    "A. Sungai Sa'ua adalah sungai tercantik di daerah tersebut.",
+                    "B. Debit air Sungai Sa'ua mencapai 120 liter per detik pada musim hujan.",
+                    "C. Sungai Sa'ua sepertinya sangat menakutkan saat banjir.",
+                    "D. Aliran airnya amat menenangkan jiwa pengunjung.",
+                    "E. Pemandangan di sekitar sungai sangat menakjubkan."
+                ],
+                answer: 1,
+                explanation: "Kalimat B berisi pengukuran empiris kuantitatif yang objektif tanpa unsur kesan perorangan."
+            },
+            {
+                id: 36,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Penulisan nama ilmiah 'Solanum tuberosum' yang tepat menurut aturan tata nama biologi dalam teks cetak adalah...",
+                options: [
+                    "A. Solanum Tuberosum",
+                    "B. solanum tuberosum",
+                    "C. *Solanum tuberosum*",
+                    "D. *SOLANUM TUBEROSUM*",
+                    "E. Solanum tuberosum"
+                ],
+                answer: 2,
+                explanation: "Nama genus diawali huruf kapital, spesies huruf kecil, dan keduanya dicetak miring (*italics*)."
+            },
+            {
+                id: 37,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Paragraf yang berisi rangkuman akhir dan kesimpulan fungsi objek dalam teks LHO dinamakan...",
+                options: ["A. Pernyataan umum", "B. Orientasi awal", "C. Deskripsi manfaat / simpulan", "D. Deretan penjelas", "E. Tesis utama"],
+                answer: 2,
+                explanation: "Bagian simpulan di akhir teks LHO merangkum poin utama dan nilai manfaat objek bagi manusia/lingkungan."
+            },
+            {
+                id: 38,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Konjungsi yang digunakan untuk menyatakan hubungan penambahan adalah...",
+                options: ["A. Tetapi", "B. Dan", "C. Karena", "D. Sehingga", "E. Meskipun"],
+                answer: 1,
+                explanation: "'Dan' merupakan konjungsi koordinatif penanda penambahan/penggabungan."
+            },
+            {
+                id: 39,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Kalimat yang mengandung kesalahan penulisan kata depan di- adalah...",
+                options: [
+                    "A. Serangga tersebut ditemukan di dalam goa.",
+                    "B. Sampel air diambil di sungai Sa'ua.",
+                    "C. Burung itu hinggap di cabang pohon.",
+                    "D. Telur belalang disembunyikan dibalik daun.",
+                    "E. Observasi dilakukan di laboratorium."
+                ],
+                answer: 3,
+                explanation: "'dibalik daun' seharusnya ditulis terpisah 'di balik daun' karena 'balik' menunjukkan posisi/tempat."
+            },
+            {
+                id: 40,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Sifat laporan hasil observasi di bawah ini yang benar adalah...",
+                options: [
+                    "A. Informatif, komunikatif, dan objektif",
+                    "B. Fiktif, imajinatif, dan estetis",
+                    "C. Subjektif, emosional, dan ajakan",
+                    "D. Prosedural, kualitatif, dan fiktif",
+                    "E. Rahasia, tertutup, dan opini"
+                ],
+                answer: 0,
+                explanation: "Leksikon teks ilmiah LHO mensyaratkan sifat Informatif (memberi tahu), Komunikatif (mudah dipahami), dan Objektif (berdasarkan fakta)."
+            },
+            {
+                id: 41,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Perhatikan kutipan: 'Kunang-kunang betina ada yang tidak memiliki sayap dan tinggal di atas tanah.' Makna kata nocturnal yang berhubungan dengan hewan tersebut adalah...",
+                options: ["A. Aktif pada siang hari", "B. Aktif pada malam hari", "C. Berkelompok di pohon", "D. Berpindah tempat musiman", "E. Menyukai air bersih"],
+                answer: 1,
+                explanation: "Nocturnal / noktural adalah sifat organisme yang beraktivitas utama pada malam hari."
+            },
+            {
+                id: 42,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Dalam mempresentasikan hasil LHO dengan bantuan slide, hal yang sebaiknya ditampilkan pada slide adalah...",
+                options: [
+                    "A. Seluruh paragraf laporan secara utuh tanpa dipotong",
+                    "B. Poin-poin penting, data kuantitatif, dan gambar visual pendukung",
+                    "C. Opini pribadi pemprasentasi",
+                    "D. Tulisan berukuran sangat kecil agar muat banyak",
+                    "E. Dongeng latar belakang pembuatan teks"
+                ],
+                answer: 1,
+                explanation: "Slide presentasi yang efektif hanya memuat poin inti (bullet points), fakta/data kunci, serta media visual yang memperjelas."
+            },
+            {
+                id: 43,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Kalimat di bawah ini yang menggunakan kata kerja aktif transitif adalah...",
+                options: [
+                    "A. Belalang sembah bertengger di ranting.",
+                    "B. Peneliti mengamati perilaku kawin kunang-kunang.",
+                    "C. Air sungai mengalir sangat tenang.",
+                    "D. Bunga tabebuya mekar di musim kemarau.",
+                    "E. Burung cendrawasih bernyanyi di pagi hari."
+                ],
+                answer: 1,
+                explanation: "'Mengamati' adalah verba transitif yang membutuhkan objek langsung ('perilaku kawin kunang-kunang')."
+            },
+            {
+                id: 44,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Berikut ini yang bukan merupakan langkah-langkah dalam menyusun teks LHO adalah...",
+                options: [
+                    "A. Menentukan objek pengamatan",
+                    "B. Melakukan observasi dan mencatat fakta di lapangan",
+                    "C. Mengimajinasikan cerita fiktif tentang objek",
+                    "D. Menyusun kerangka teks sesuai struktur LHO",
+                    "E. Mengembangkan kerangka menjadi laporan utuh dan merevisi"
+                ],
+                answer: 2,
+                explanation: "Mengimajinasikan cerita fiktif bertentangan dengan prinsip dasar LHO yang berbasis fakta empiris."
+            },
+            {
+                id: 45,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Manakah kata di bawah ini yang mengalami afiksasi pembentukan verba dengan prefiks me-?",
+                options: ["A. Menari", "B. Memikat", "C. Menatap", "D. Membantu", "E. Semua jawaban benar"],
+                answer: 4,
+                explanation: "Semua kata tersebut merupakan bentuk verba yang memperoleh prefiks me- (me- + tari = menari, me- + pikat = memikat, dsb)."
+            },
+            {
+                id: 46,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Perhatikan klausa berikut: '...sehingga populasi serangga ini kian menurun.' Kata 'sehingga' tergolong konjungsi...",
+                options: ["A. Pertentangan", "B. Konsekutif / Sebab-akibat (Akibat)", "C. Syarat", "D. Penambahan", "E. Pemilihan"],
+                answer: 1,
+                explanation: "'Sehingga' menyatakan hubungan akibat dari suatu sebab yang dijelaskan sebelumnya."
+            },
+            {
+                id: 47,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Penggunaan tanda titik dua (:) yang tepat terdapat pada kalimat...",
+                options: [
+                    "A. Observasi ini meliputi: lokasi, waktu, dan objek.",
+                    "B. Kami memerlukan alat-alat berikut: kamera, alat tulis, dan pita ukur.",
+                    "C. Ciri-ciri belalang sembah: adalah berwarna hijau.",
+                    "D. Tempat pengamatan di: Taman Nasional Lorentz.",
+                    "E. Hasil dari pengamatan: sangat memuaskan."
+                ],
+                answer: 1,
+                explanation: "Tanda titik dua digunakan di akhir pernyataan lengkap yang diikuti oleh pemerincian atau pencacahan."
+            },
+            {
+                id: 48,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Apa fungsi utama instrumen lembar observasi saat melakukan pengamatan di lapangan?",
+                options: [
+                    "A. Sebagai pedoman pencatatan fakta agar data yang dikumpulkan sistematis dan terarah",
+                    "B. Sebagai syarat administratif formalitas belaka",
+                    "C. Sebagai hiasan dokumentasi foto",
+                    "D. Untuk menggantikan kegiatan pengamatan langsung",
+                    "E. Agar peneliti tidak perlu turun ke lapangan"
+                ],
+                answer: 0,
+                explanation: "Lembar observasi berfungsi memandu peneliti mencatat indikator-indikator fakta sasaran secara terstruktur."
+            },
+            {
+                id: 49,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Unsur kebahasaan yang ditandai dengan penggunaan istilah biologi, kata definisi, dan kata deskripsi sangat dominan dalam...",
+                options: ["A. Teks Hikayat", "B. Teks Laporan Hasil Observasi", "C. Teks Puisi", "D. Teks Negosiasi", "E. Teks Cerpen"],
+                answer: 1,
+                explanation: "Ciri kebahasaan baku teks LHO ditandai penggunaan verba definisi, verba deskripsi, serta leksikon spesifik keilmuan."
+            },
+            {
+                id: 50,
+                type: "single",
+                typeText: "Pilihan Ganda",
+                question: "Laporan hasil observasi dikatakan objektif apabila...",
+                options: [
+                    "A. Ditulis berdasarkan prasangka umum masyarakat",
+                    "B. Ditulis sesuai kenyataan fakta empiris tanpa rekayasa pribadi",
+                    "C. Ditulis dengan gaya bahasa puisi yang puitis",
+                    "D. Diubah sesuai keinginan pemesan laporan",
+                    "E. Menggabungkan fakta dengan mitos lokal"
+                ],
+                answer: 1,
+                explanation: "Objektivitas mensyaratkan data murni sesuai realita fisik empiris yang diamati di lapangan."
+            },
+
+            // --- SECTION 2: PILIHAN GANDA KOMPLEKS / PILIH LEBIH DARI SATU (51-80) ---
+            {
+                id: 51,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Manakah dari ciri-ciri berikut yang merupakan ciri khas struktur teks Laporan Hasil Observasi? (Pilih dua jawaban benar)",
+                options: [
+                    "A. Memuat pernyataan umum / klasifikasi di awal teks",
+                    "B. Menyajikan alur konflik dramatis antar tokoh",
+                    "C. Menguraikan deskripsi bagian mengenai rincian objek",
+                    "D. Menggunakan sudut pandang orang pertama 'Aku'",
+                    "E. Diakhiri penyelesaian masalah fantasi"
+                ],
+                answer: [0, 2],
+                explanation: "Struktur LHO memuat Pernyataan Umum di awal dan Deskripsi Bagian di tengahnya. LHO bersifat ilmiah (bukan fiksi/naratif)."
+            },
+            {
+                id: 52,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua kalimat di bawah ini yang tergolong sebagai 'kalimat definisi'!",
+                options: [
+                    "A. Kunang-kunang adalah serangga nocturnal yang memiliki organ penghasil cahaya di bagian perut.",
+                    "B. Sayap kunang-kunang berwarna cokelat kehitaman dengan tekstur agak keras.",
+                    "C. Belalang sembah merupakan predator serangga yang tergolong dalam ordo Mantodea.",
+                    "D. Belalang ini sering hinggap di tangkai bunga anggrek warna merah muda.",
+                    "E. Peneliti mengamati gerakan serangga tersebut selama 3 jam."
+                ],
+                answer: [0, 2],
+                explanation: "Kalimat A dan C menggunakan verba pembuka definisi 'adalah' dan 'merupakan'."
+            },
+            {
+                id: 53,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Manakah kalimat berikut yang penulisan prefiks/kata depan di- nya sudah BENAR? (Pilih dua jawaban benar)",
+                options: [
+                    "A. Belalang anggrek ditemukan di wilayah hutan hujan Asia Tenggara.",
+                    "B. Sampel tanaman di ambil lalu di masukkan ke dalam plastik.",
+                    "C. Cahaya bioluminesens dihasilkan oleh sel khusus pada perut kunang-kunang.",
+                    "D. Data tersebut dicatat di laboratorium secara cermat.",
+                    "E. Observasi ini dilakukan di-kabupaten Jayawijaya."
+                ],
+                answer: [0, 3],
+                explanation: "Kalimat A ('di wilayah') dan D ('di laboratorium') menunjukkan penulisan kata depan tempat secara terpisah yang tepat."
+            },
+            {
+                id: 54,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua indikator yang membuat kunang-kunang dikategorikan sebagai 'bioindikator' kualitas lingkungan!",
+                options: [
+                    "A. Sensitif terhadap pencemaran pestisida dan kimia pada tanah/air",
+                    "B. Mampu terbang cepat menyeberangi samudra",
+                    "C. Membutuhkan habitat dengan udara bersih dan tingkat polusi cahaya rendah",
+                    "D. Mampu memangsa mamalia besar di hutan",
+                    "E. Diberdayakan sebagai hewan ternak penghasil daging"
+                ],
+                answer: [0, 2],
+                explanation: "Bioindikator berarti keberadaan populasi serangga tersebut mencerminkan kebersihan udara, tanah, dan rendahnya cahaya buatan."
+            },
+            {
+                id: 55,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Manakah dari elemen berikut yang WAJIB dicantumkan dalam daftar pustaka format Chicago Manual of Style (CMS 17th)? (Pilih tiga jawaban benar)",
+                options: [
+                    "A. Nama penulis/pengarang",
+                    "B. Judul buku/sumber",
+                    "C. Tahun penerbitan",
+                    "D. Tanggal lahir pengarang",
+                    "E. Alamat rumah pengarang"
+                ],
+                answer: [0, 1, 2],
+                explanation: "Unsur rujukan rincian pustaka baku meliputi Nama Pengarang, Judul Buku, Kota, Penerbit, dan Tahun Terbit."
+            },
+            {
+                id: 56,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua contoh data kuantitatif yang relevan untuk teks laporan hasil observasi!",
+                options: [
+                    "A. Tinggi batang tanaman tabebuya berkisar antara 4 hingga 8 meter.",
+                    "B. Bunga tabebuya tampak sangat menawan saat mekar serentak.",
+                    "C. Suhu rata-rata di habitat pengamatan adalah 24°C.",
+                    "D. Warna daun terlihat agak kekuningan dan kurang segar.",
+                    "E. Hutan terasa sunyi dan damai pada malam hari."
+                ],
+                answer: [0, 2],
+                explanation: "A (4 hingga 8 meter) dan C (24°C) memuat ukuran numerik terukur (kuantitatif)."
+            },
+            {
+                id: 57,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Apa saja manfaat menyajikan laporan observasi dalam bentuk grafik atau infografis? (Pilih dua jawaban benar)",
+                options: [
+                    "A. Memudahkan pembaca memahami tren data yang kompleks",
+                    "B. Menggantikan seluruh teks penjelasan fakta secara total",
+                    "C. Memperjelas perbandingan numerik secara visual",
+                    "D. Membuat laporan ilmiah berubah menjadi fiksi cerita",
+                    "E. Menghilangkan kewajiban mencantumkan data fakta"
+                ],
+                answer: [0, 2],
+                explanation: "Visualisasi grafik/infografis memperjelas tren data dan perbandingan angka agar lebih mudah dicerna."
+            },
+            {
+                id: 58,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua kata kerja material (verba tindakan fisik) dari daftar di bawah ini!",
+                options: [
+                    "A. Terbang",
+                    "B. Merupakan",
+                    "C. Memangsa",
+                    "D. Adalah",
+                    "E. Yaitu"
+                ],
+                answer: [0, 2],
+                explanation: "'Terbang' dan 'Memangsa' menunjukkan aktivitas atau tindakan fisik nyata yang dilakukan oleh objek."
+            },
+            {
+                id: 59,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Manakah pernyataan di bawah ini yang sesuai dengan kaidah kebahasaan teks LHO? (Pilih dua jawaban benar)",
+                options: [
+                    "A. Banyak menggunakan kata hubung antarkalimat untuk menjaga koherensi",
+                    "B. Dominan menggunakan ungkapan majas dan konotatif",
+                    "C. Menggunakan istilah ilmiah teknis sesuai bidang ilmu objek yang diamati",
+                    "D. Menggunakan sudut pandang emosional pengamat",
+                    "E. Memuat dialog percakapan langsung antar observer"
+                ],
+                answer: [0, 2],
+                explanation: "Kaidah LHO ditandai oleh koherensi antarkalimat dan penggunaan istilah teknis ilmiah sesuai ranah ilmunya."
+            },
+            {
+                id: 60,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua syarat utama agar sebuah pengamatan dikatakan sebagai observasi ilmiah!",
+                options: [
+                    "A. Dilakukan secara terencana, sistematis, dan objektif",
+                    "B. Berdasarkan bayangan imajinasi peneliti semata",
+                    "C. Data diuji atau dicatat secara cermat berdasarkan fakta nyata",
+                    "D. Hasilnya dirahasiakan dari publik",
+                    "E. Menggunakan pendapat pribadi tanpa bukti lapangan"
+                ],
+                answer: [0, 2],
+                explanation: "Observasi ilmiah mensyaratkan perencanaan sistematis dan keakuratan pencatatan data fakta di lapangan."
+            },
+            // Soal 61-80 (Melengkapi PG Kompleks 51-80)
+            {
+                id: 61,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua pernyataan yang BENAR mengenai ciri belalang anggrek!",
+                options: [
+                    "A. Memiliki kaki yang terdistribusi menyerupai daun kelopak bunga anggrek",
+                    "B. Merupakan herbivora murni pemakan dedaunan kering",
+                    "C. Mampu mengubah warna tubuhnya secara perlahan sesuai substrat lingkungan",
+                    "D. Hidup secara berkawanan di dasar air laut",
+                    "E. Tidak memiliki kemampuan berkamuflase"
+                ],
+                answer: [0, 2],
+                explanation: "Belalang anggrek memiliki bagian tubuh menyerupai mahkota/kelopak bunga dan mampu melakukan penyamaran warna."
+            },
+            {
+                id: 62,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Manakah dua hal di bawah ini yang membedakan kutipan langsung dan tidak langsung? (Pilih dua)",
+                options: [
+                    "A. Kutipan langsung menyalin kata per kata persis sama dengan sumber asli",
+                    "B. Kutipan tidak langsung wajib memakai tanda petik dua di awal dan akhir",
+                    "C. Kutipan tidak langsung melakukan parafase ide dengan susunan kalimat sendiri",
+                    "D. Kutipan langsung tidak memerlukan pencantuman nama pengarang",
+                    "E. Kutipan tidak langsung mengubah makna asli karangan"
+                ],
+                answer: [0, 2],
+                explanation: "Kutipan langsung menyalin persis sesuai aslinya, sedangkan kutipan tidak langsung memparafrasekan tulisan."
+            },
+            {
+                id: 63,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua kata depan 'di' yang ditulis SALAH di bawah ini!",
+                options: [
+                    "A. di pinggir sungai",
+                    "B. dilapangan",
+                    "C. disekolah",
+                    "D. di atas meja",
+                    "E. di dalam hutan"
+                ],
+                answer: [1, 2],
+                explanation: "'dilapangan' dan 'disekolah' salah karena kata depan tempat harus ditulis terpisah ('di lapangan', 'di sekolah')."
+            },
+            {
+                id: 64,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Apa saja unsur yang perlu ada dalam pengubahan LHO menjadi bentuk komik edukasi? (Pilih dua)",
+                options: [
+                    "A. Karakter/tokoh penjelas yang mengantarkan fakta",
+                    "B. Boks dialog yang berisi informasi ilmiah yang telah disederhanakan",
+                    "C. Bumbu kebohongan fakta agar lucu",
+                    "D. Menghilangkan gambar ilustrasi",
+                    "E. Perubahan total data ilmiah menjadi gosip"
+                ],
+                answer: [0, 1],
+                explanation: "Komik edukasi membutuhkan karakter penyampai pesan dan dialog visual tanpa merusak esensi fakta."
+            },
+            {
+                id: 65,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Manakah yang merupakan istilah teknis dalam ekosistem perairan? (Pilih dua)",
+                options: [
+                    "A. Plankton",
+                    "B. Bentos",
+                    "C. Nimbostratus",
+                    "D. Elytra",
+                    "E. Stomata"
+                ],
+                answer: [0, 1],
+                explanation: "Plankton dan Bentos adalah organisme khas perairan. Nimbostratus (awan), Elytra (sayap kumbang), Stomata (daun)."
+            },
+            {
+                id: 66,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua alasan pentingnya merevisi draft teks laporan observasi sebelum dipublikasikan!",
+                options: [
+                    "A. Memeriksa keakuratan ejaan dan tanda baca sesuai EYD",
+                    "B. Memastikan bahwa fakta yang ditulis sesuai data hasil pengamatan",
+                    "C. Mengganti isi laporan agar menjadi cerita komedi",
+                    "D. Memperbanyak istilah asing yang tidak relevan",
+                    "E. Menghilangkan struktur deskripsi bagian"
+                ],
+                answer: [0, 1],
+                explanation: "Revisi bertujuan menyempurnakan kebahasaan (ejaan) serta validasi keakuratan isi fakta."
+            },
+            {
+                id: 67,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Manakah dua contoh kalimat yang memuat 'kalimat deskripsi'? (Pilih dua)",
+                options: [
+                    "A. Bunga tabebuya berbunga merah muda cerah dengan mahkota tipis berbentuk terompet.",
+                    "B. Tabebuya adalah jenis pohon pelindung kota.",
+                    "C. Permukaan kulit kayu pohon ini kasar dan berwarna abu-abu kecokelatan.",
+                    "D. Observasi dilakukan di sepanjang jalan utama kota.",
+                    "E. Penelitian ini bertujuan untuk mengukur tingkat peneduh."
+                ],
+                answer: [0, 2],
+                explanation: "Kalimat A dan C mendeskripsikan ciri tampak visual fisik objek secara mendetail."
+            },
+            {
+                id: 68,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua konjungsi di bawah ini yang menandakan hubungan sebab-akibat!",
+                options: [
+                    "A. Oleh karena itu",
+                    "B. Sehingga",
+                    "C. Dan",
+                    "D. Atau",
+                    "E. Serta"
+                ],
+                answer: [0, 1],
+                explanation: "'Oleh karena itu' dan 'sehingga' menunjukkan penalaran kausalitas (sebab-akibat)."
+            },
+            {
+                id: 69,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Apa fungsi utama foto atau gambar dokumentasi dalam teks LHO? (Pilih dua)",
+                options: [
+                    "A. Bukti otentik bahwa observasi telah dilaksanakan secara nyata di lapangan",
+                    "B. Membantu visualisasi pembaca mengenai ciri fisik objek",
+                    "C. Sekadar memperindah tampilan tanpa makna",
+                    "D. Menutupi kekurangan fakta yang tidak dicatat",
+                    "E. Menggantikan seluruh teks uraian"
+                ],
+                answer: [0, 1],
+                explanation: "Dokumentasi foto menjadi bukti validitas data empiris sekaligus membantu visualisasi pembaca."
+            },
+            {
+                id: 70,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua kata berimbuhan me- yang bermakna 'melakukan tindakan'!",
+                options: [
+                    "A. Mencatat",
+                    "B. Memotong",
+                    "C. Mendarat",
+                    "D. Membesar",
+                    "E. Meninggi"
+                ],
+                answer: [0, 1],
+                explanation: "'Mencatat' dan 'Memotong' merupakan verba aktif transitif tindakan."
+            },
+            {
+                id: 71,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Manakah dua pernyataan berikut yang tepat mengenai struktur 'Deskripsi Manfaat'? (Pilih dua)",
+                options: [
+                    "A. Berada pada bagian akhir atau penutup teks LHO",
+                    "B. Menjelaskan nilai kegunaan atau fungsi objek bagi kehidupan/ekosistem",
+                    "C. Berisi pengenalan awal nama ilmiah objek",
+                    "D. Menjelaskan klasifikasi kelas dan ordo spesies",
+                    "E. Berisi konflik dan peleraian cerita"
+                ],
+                answer: [0, 1],
+                explanation: "Deskripsi manfaat terletak di bagian penutup dan menguraikan fungsi/faedah objek."
+            },
+            {
+                id: 72,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua serangga yang sering diulas dalam teks LHO sebagai objek penelitian pengamatan ekosistem!",
+                options: [
+                    "A. Belalang Sembah (Mantis)",
+                    "B. Kunang-kunang (Lampyridae)",
+                    "C. Dinosaurus",
+                    "D. Mammoth",
+                    "E. Burung Garuda"
+                ],
+                answer: [0, 1],
+                explanation: "Belalang sembah dan kunang-kunang adalah contoh objek hewan dalam Buku Teks Siswa LHO Kelas X."
+            },
+            {
+                id: 73,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua penggunaan tanda baca yang BENAR dalam laporan ilmiah!",
+                options: [
+                    "A. Penggunaan titik (.) di akhir kalimat berita faktual",
+                    "B. Tanda koma (,) di antara unsur-unsur dalam rincian bilangan atau kata",
+                    "C. Tanda seru (!) di setiap akhir kalimat laporan",
+                    "D. Tanda tanya (?) pada kalimat pernyataan definisi",
+                    "E. Tanda petik ganda untuk penulisan nama latin"
+                ],
+                answer: [0, 1],
+                explanation: "Titik di akhir kalimat deklaratif dan koma untuk pemisah rincian merupakan kaidah PUEBI yang tepat."
+            },
+            {
+                id: 74,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Ciri-ciri bahasa keilmuan dalam laporan LHO adalah... (Pilih dua)",
+                options: [
+                    "A. Denotatif (bermakna sebenarnya)",
+                    "B. Baku dan terstruktur",
+                    "C. Konotatif (kiasan)",
+                    "D. Bahasa gaul/slang",
+                    "E. Puitis bernada emosi"
+                ],
+                answer: [0, 1],
+                explanation: "Bahasa ilmiah mensyaratkan makna denotatif (sebenarnya) dan penggunaan kaidah bahasa baku."
+            },
+            {
+                id: 75,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua hal yang harus dihindari dalam menulis LHO!",
+                options: [
+                    "A. Memasukkan opini pribadi yang tidak terbukti",
+                    "B. Memalsukan atau memanipulasi angka data di lapangan",
+                    "C. Mencantumkan nama latin objek",
+                    "D. Menggunakan kalimat definisi",
+                    "E. Menuliskan lokasi dan waktu pengamatan"
+                ],
+                answer: [0, 1],
+                explanation: "Opini tidak berdasar dan pemalsuan data merusak objektivitas dan integritas ilmiah LHO."
+            },
+            {
+                id: 76,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Manakah yang tergolong dalam kelompok flora pelindung / peneduh kota? (Pilih dua)",
+                options: [
+                    "A. Pohon Tabebuya",
+                    "B. Pohon Trembesi",
+                    "C. Teratai",
+                    "D. Jamur Kuping",
+                    "E. Eceng Gondok"
+                ],
+                answer: [0, 1],
+                explanation: "Tabebuya dan Trembesi adalah jenis pohon peneduh berkayu keras di lanskap perkotaan."
+            },
+            {
+                id: 77,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua cara efektif menyampaikan hasil pengamatan saat presentasi kelompok!",
+                options: [
+                    "A. Menggunakan bahasa yang santun, jelas, dan lugas",
+                    "B. Membuka ruang tanya jawab berbasis fakta laporan",
+                    "C. Acuh tak acuh terhadap pertanyaan audiens",
+                    "D. Membaca teks di slide tanpa menatap audiens",
+                    "E. Mengabaikan alokasi waktu presentasi"
+                ],
+                answer: [0, 1],
+                explanation: "Penyampaian yang jelas dan diskusi interaktif berbasis fakta merupakan etika presentasi yang baik."
+            },
+            {
+                id: 78,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Manakah dua contoh konjungsi antarkalimat di bawah ini? (Pilih dua)",
+                options: [
+                    "A. Akan tetapi,",
+                    "B. Selain itu,",
+                    "C. Dan",
+                    "D. Bahwa",
+                    "E. Yang"
+                ],
+                answer: [0, 1],
+                explanation: "'Akan tetapi,' dan 'Selain itu,' menghubungkan gagasan antar dua kalimat terpisah."
+            },
+            {
+                id: 79,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua keunggulan penyampaian LHO dalam bentuk audio (podcast edukasi)! (Pilih dua)",
+                options: [
+                    "A. Memudahkan pendengar menyerap informasi sains sambil beraktivitas",
+                    "B. Jangkauan penyebaran lebih luas melalui platform digital",
+                    "C. Menghilangkan unsur penjelasan lisan",
+                    "D. Membutuhkan kemampuan lukis komik yang tinggi",
+                    "E. Tidak perlu menyiapkan naskah fakta"
+                ],
+                answer: [0, 1],
+                explanation: "Media audio/podcast unggul dalam fleksibilitas pendengaran dan jangkauan penyebaran digital."
+            },
+            {
+                id: 80,
+                type: "complex",
+                typeText: "Pilihan Ganda Kompleks (Pilih >1)",
+                question: "Pilihlah dua struktur kata turunan berkonfiks pe-an yang menyatakan 'proses'! (Pilih dua)",
+                options: [
+                    "A. Pengamatan",
+                    "B. Pengelompokan",
+                    "C. Pedesaan",
+                    "D. Pegunungan",
+                    "E. Pelabuhan"
+                ],
+                answer: [0, 1],
+                explanation: "'Pengamatan' (proses mengamati) dan 'Pengelompokan' (proses mengelompokkan)."
+            },
+
+            // --- SECTION 3: BENAR / SALAH (81-100) ---
+            {
+                id: 81,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Teks Laporan Hasil Observasi boleh ditulis berdasarkan imajinasi dan rekaan pribadi penulis.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 1,
+                explanation: "SALAH. Teks LHO wajib ditulis berdasarkan fakta empiris hasil pengamatan objektif di lapangan."
+            },
+            {
+                id: 82,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Kalimat 'Wayang adalah seni pertunjukan tradisional Indonesia yang diakui UNESCO' merupakan contoh kalimat definisi.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 0,
+                explanation: "BENAR. Menggunakan verba kopula 'adalah' yang memberikan gambaran batasan pengertian."
+            },
+            {
+                id: 83,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Kata depan 'di' yang menunjukkan tempat (seperti 'di hutan') ditulis serangkai tanpa spasi.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 1,
+                explanation: "SALAH. Kata depan tempat harus ditulis terpisah dengan spasi ('di hutan')."
+            },
+            {
+                id: 84,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Belalang anggrek memanfaatkan penyamaran fisik menyerupai bunga untuk memangsa serangga penyerbuk.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 0,
+                explanation: "BENAR. Ini dinamakan teknik kamuflase / mimikri agresif untuk menarik mangsa."
+            },
+            {
+                id: 85,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Bioluminesens pada kunang-kunang menghasilkan panas yang sangat tinggi sehingga menyengat tangan manusia.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 1,
+                explanation: "SALAH. Cahaya bioluminesens kunang-kunang dinamakan 'cahaya dingin' (cold light) karena hampir 100% energinya menjadi cahaya tanpa menghasilkan panas."
+            },
+            {
+                id: 86,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Struktur pertama dalam teks Laporan Hasil Observasi adalah Deskripsi Manfaat.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 1,
+                explanation: "SALAH. Struktur awal LHO adalah Pernyataan Umum / Klasifikasi. Deskripsi Manfaat terletak di akhir teks."
+            },
+            {
+                id: 87,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Penulisan kutipan tidak langsung dilakukan dengan menyalin utuh kata demi kata tanpa ubahan dan menyertakan rujukan.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 1,
+                explanation: "SALAH. Menyalin kata demi kata adalah kutipan langsung. Kutipan tidak langsung menggunakan teknik parafase (menyusun kembali kalimat dengan gaya sendiri)."
+            },
+            {
+                id: 88,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Kehadiran kunang-kunang di suatu kawasan menandakan bahwa lingkungan tersebut belum tercemar limbah kimia.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 0,
+                explanation: "BENAR. Kunang-kunang merupakan bioindikator alami kebersihan ekosistem air dan udara."
+            },
+            {
+                id: 89,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Kata 'merupakan', 'adalah', dan 'yaitu' sering ditemukan dalam kalimat deskripsi.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 1,
+                explanation: "SALAH. Kata-kata tersebut merupakan penanda 'kalimat definisi', bukan kalimat deskripsi."
+            },
+            {
+                id: 90,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Data kuantitatif dalam laporan ditulis dalam bentuk angka terukur seperti tinggi, bobot, atau jumlah populasi.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 0,
+                explanation: "BENAR. Data kuantitatif merujuk pada ukuran numerik terhitung yang pasti."
+            },
+            {
+                id: 91,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Penulisan daftar pustaka versi Chicago Manual of Style (CMS 17th) menempatkan tahun terbit setelah nama penulis.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 1,
+                explanation: "SALAH. CMS 17th Notes & Bibliography menempatkan judul buku setelah nama pengarang, baru diakhiri kota, penerbit, dan tahun terbit di bagian akhir."
+            },
+            {
+                id: 92,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Mengubah teks LHO menjadi infografis bertujuan agar informasi faktual lebih mudah dipahami secara visual.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 0,
+                explanation: "BENAR. Infografis menyederhanakan penyampaian data faktual melalui elemen desain visual."
+            },
+            {
+                id: 93,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Imbuhan prefiks me- pada kata 'memikat' berasal dari dasar kata 'pikat'.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 0,
+                explanation: "BENAR. Fonem /p/ luluh saat bertemu prefiks me- menjadi 'memikat'."
+            },
+            {
+                id: 94,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Metamorfosis belalang tergolong metamorfosis sempurna karena melewati fase pupa/kepompong.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 1,
+                explanation: "SALAH. Belalang mengalami metamorfosis TIDAK sempurna (hemimetabola) tanpa melalui tahapan pupa."
+            },
+            {
+                id: 95,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Istilah 'Ooteka' merujuk pada sarung atau kantong pelindung telur serangga belalang sembah.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 0,
+                explanation: "BENAR. Ooteka adalah struktur pelindung bubusa tempat meletakkan telur-telur belalang sembah."
+            },
+            {
+                id: 96,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Pohon Tabebuya berasal dari wilayah Indonesia asli dan hanya tumbuh di lereng pegunungan tinggi.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 1,
+                explanation: "SALAH. Tabebuya (Handroanthus) aslinya berasal dari kawasan Amerika Selatan (Brasil/Amazon) yang kini banyak ditanam di daerah tropis."
+            },
+            {
+                id: 97,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Kalimat 'Matahari terbit dari sebelah barat' dapat dimasukkan ke dalam teks LHO sebagai fakta.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 1,
+                explanation: "SALAH. Pernyataan tersebut adalah kebohongan/fakta keliru secara sains."
+            },
+            {
+                id: 98,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Penggunaan bahasa konotatif dan kata kiasan sangat dianjurkan dalam penulisan laporan ilmiah LHO.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 1,
+                explanation: "SALAH. Bahasa LHO harus bersifat denotatif (makna sebenarnya) dan lugas agar tidak memicu ambigu multitafsir."
+            },
+            {
+                id: 99,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Bagian 'Pernyataan Umum' pada LHO berisi rincian faedah objek bagi manusia.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 1,
+                explanation: "SALAH. Pernyataan umum memuat klasifikasi dan gambaran awal. Rincian faedah/kegunaan berada di bagian Deskripsi Manfaat."
+            },
+            {
+                id: 100,
+                type: "tf",
+                typeText: "Benar / Salah",
+                question: "Pernyataan: Taman Nasional Lorentz merupakan salah satu kawasan warisan dunia yang diakui UNESCO di Pulau Papua.",
+                options: ["A. Benar", "B. Salah"],
+                answer: 0,
+                explanation: "BENAR. Taman Nasional Lorentz ditetapkan sebagai Warisan Dunia UNESCO pada tahun 1999."
+            }
+        ];
+
+        // -------------------------------------------------------------
+        // STATE MANAGEMENT CBT
+        // -------------------------------------------------------------
+        let currentIndex = 0;
+        let userAnswers = new Array(questionsData.length).fill(null);
+        let flaggedState = new Array(questionsData.length).fill(false);
+        let activeFilter = 'all';
+        let detailFilter = 'all';
+        let isSubmitted = false;
+        let examMode = 'ujian'; // 'ujian' or 'latihan'
+        let timeRemaining = 120 * 60; // 120 menit dalam detik
+        let timerInterval = null;
+
+        // Initialize App on Window Load
+        window.onload = function() {
+            renderPalette();
+            loadQuestion(0);
+            startTimer();
+        };
+
+        function switchMode(mode) {
+            examMode = mode;
+            const btnUjian = document.getElementById('btn-mode-ujian');
+            const btnLatihan = document.getElementById('btn-mode-latihan');
+
+            if (mode === 'latihan') {
+                btnLatihan.className = "px-2.5 py-1 rounded-md font-medium transition bg-indigo-600 text-white shadow";
+                btnUjian.className = "px-2.5 py-1 rounded-md font-medium transition text-indigo-300 hover:text-white";
+            } else {
+                btnUjian.className = "px-2.5 py-1 rounded-md font-medium transition bg-indigo-600 text-white shadow";
+                btnLatihan.className = "px-2.5 py-1 rounded-md font-medium transition text-indigo-300 hover:text-white";
+            }
+            loadQuestion(currentIndex);
+        }
+
+        // Timer Logic
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timeup-modal').classList.remove('hidden');
+                    return;
+                }
+                timeRemaining--;
+                const min = Math.floor(timeRemaining / 60);
+                const sec = timeRemaining % 60;
+                document.getElementById('timer').innerText = 
+                    `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // Load Question UI
+        function loadQuestion(index) {
+            currentIndex = index;
+            const q = questionsData[index];
+
+            // Badges & Headers
+            document.getElementById('q-number-badge').innerText = `Soal #${q.id}`;
+            document.getElementById('q-type-badge').innerText = q.typeText;
+            document.getElementById('flag-checkbox').checked = flaggedState[index];
+
+            // Question Text
+            document.getElementById('question-text').innerText = q.question;
+
+            // Context Box (if any)
+            const ctxBox = document.getElementById('context-box');
+            ctxBox.classList.add('hidden');
+
+            // Options Container
+            const optContainer = document.getElementById('options-container');
+            optContainer.innerHTML = '';
+
+            const currentAns = userAnswers[index];
+            const showInstantFeedback = (examMode === 'latihan' && currentAns !== null) || isSubmitted;
+
+            q.options.forEach((optText, optIdx) => {
+                const optWrapper = document.createElement('label');
+                optWrapper.className = `flex items-start p-3.5 rounded-xl border border-slate-200 cursor-pointer transition select-none hover:bg-slate-50 ${getOptionStyle(index, optIdx)}`;
+
+                let inputHtml = '';
+                if (q.type === 'complex') {
+                    const isChecked = Array.isArray(currentAns) && currentAns.includes(optIdx);
+                    inputHtml = `<input type="checkbox" name="option" onchange="selectComplexOption(${optIdx})" ${isChecked ? 'checked' : ''} ${isSubmitted ? 'disabled' : ''} class="mt-1 w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">`;
+                } else {
+                    const isChecked = currentAns === optIdx;
+                    inputHtml = `<input type="radio" name="option" onchange="selectSingleOption(${optIdx})" ${isChecked ? 'checked' : ''} ${isSubmitted ? 'disabled' : ''} class="mt-1 w-4 h-4 text-indigo-600 focus:ring-indigo-500">`;
+                }
+
+                optWrapper.innerHTML = `
+                    ${inputHtml}
+                    <span class="ml-3 text-sm md:text-base text-slate-700 leading-relaxed">${optText}</span>
+                `;
+                optContainer.appendChild(optWrapper);
+            });
+
+            // Instant Feedback Banner in Latihan Mode
+            const instantBanner = document.getElementById('instant-feedback');
+            if (examMode === 'latihan' && currentAns !== null && !isSubmitted) {
+                const isCorrect = checkIsQuestionCorrect(q, currentAns);
+                instantBanner.classList.remove('hidden');
+                if (isCorrect) {
+                    instantBanner.className = 'mt-4 p-3 rounded-lg border text-sm flex items-center space-x-2 font-medium bg-emerald-50 border-emerald-300 text-emerald-800';
+                    instantBanner.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i> <span>Jawaban Anda <b>BENAR!</b></span>`;
+                } else {
+                    instantBanner.className = 'mt-4 p-3 rounded-lg border text-sm flex items-center space-x-2 font-medium bg-rose-50 border-rose-300 text-rose-800';
+                    instantBanner.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 text-lg"></i> <span>Jawaban Anda <b>BELUM TEPAT</b>. Silakan periksa kunci & pembahasan di bawah.</span>`;
+                }
+            } else {
+                instantBanner.classList.add('hidden');
+            }
+
+            // Explanation box if submitted OR if in latihan mode & answered
+            const expBox = document.getElementById('explanation-box');
+            if (showInstantFeedback) {
+                expBox.classList.remove('hidden');
+                document.getElementById('explanation-text').innerText = q.explanation;
+            } else {
+                expBox.classList.add('hidden');
+            }
+
+            // Update prev/next button state
+            document.getElementById('btn-prev').disabled = (index === 0);
+            document.getElementById('btn-next').innerText = (index === questionsData.length - 1) ? 'Selesai' : 'Berikutnya ';
+            
+            updateAnsweredCount();
+            renderPalette();
+        }
+
+        function checkIsQuestionCorrect(q, uAns) {
+            if (uAns === null || uAns === undefined) return false;
+            if (q.type === 'complex') {
+                if (!Array.isArray(uAns)) return false;
+                const sortedUser = [...uAns].sort().join(',');
+                const sortedKey = [...q.answer].sort().join(',');
+                return sortedUser === sortedKey;
+            } else {
+                return uAns === q.answer;
+            }
+        }
+
+        // Option styling after submission or selection
+        function getOptionStyle(qIdx, optIdx) {
+            const q = questionsData[qIdx];
+            const uAns = userAnswers[qIdx];
+
+            const shouldHighlight = isSubmitted || (examMode === 'latihan' && uAns !== null);
+            if (!shouldHighlight) return '';
+
+            if (q.type === 'complex') {
+                const isCorrectOpt = q.answer.includes(optIdx);
+                const isUserSelected = Array.isArray(uAns) && uAns.includes(optIdx);
+
+                if (isCorrectOpt) {
+                    return 'bg-emerald-50 border-emerald-400 font-semibold text-emerald-900';
+                } else if (isUserSelected && !isCorrectOpt) {
+                    return 'bg-rose-50 border-rose-300 text-rose-800';
+                }
+            } else {
+                const isCorrectOpt = (q.answer === optIdx);
+                const isUserSelected = (uAns === optIdx);
+
+                if (isCorrectOpt) {
+                    return 'bg-emerald-50 border-emerald-400 font-semibold text-emerald-900';
+                } else if (isUserSelected && !isCorrectOpt) {
+                    return 'bg-rose-50 border-rose-300 text-rose-800';
+                }
+            }
+            return '';
+        }
+
+        // Selection Handlers
+        function selectSingleOption(optIdx) {
+            if (isSubmitted) return;
+            userAnswers[currentIndex] = optIdx;
+            loadQuestion(currentIndex);
+        }
+
+        function selectComplexOption(optIdx) {
+            if (isSubmitted) return;
+            let current = userAnswers[currentIndex];
+            if (!Array.isArray(current)) {
+                current = [];
+            }
+            if (current.includes(optIdx)) {
+                current = current.filter(i => i !== optIdx);
+            } else {
+                current.push(optIdx);
+            }
+            userAnswers[currentIndex] = current.length > 0 ? current : null;
+            loadQuestion(currentIndex);
+        }
+
+        function toggleFlag() {
+            flaggedState[currentIndex] = document.getElementById('flag-checkbox').checked;
+            renderPalette();
+        }
+
+        // Navigation
+        function nextQuestion() {
+            if (currentIndex < questionsData.length - 1) {
+                loadQuestion(currentIndex + 1);
+            } else {
+                openConfirmModal();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                loadQuestion(currentIndex - 1);
+            }
+        }
+
+        function jumpToQuestion(idx) {
+            loadQuestion(idx);
+        }
+
+        // Render Palette Grid
+        function renderPalette() {
+            const grid = document.getElementById('palette-grid');
+            grid.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const isAns = userAnswers[idx] !== null;
+                const isFlag = flaggedState[idx];
+                const isCurr = (idx === currentIndex);
+
+                if (activeFilter === 'unanswered' && isAns) return;
+                if (activeFilter === 'flagged' && !isFlag) return;
+
+                let bgStyle = 'bg-slate-100 text-slate-700 border-slate-300';
+                if (isFlag) {
+                    bgStyle = 'bg-amber-400 text-slate-900 border-amber-500 font-bold';
+                } else if (isAns) {
+                    bgStyle = 'bg-indigo-600 text-white border-indigo-700 font-bold';
+                }
+
+                if (isCurr) {
+                    bgStyle += ' ring-2 ring-offset-2 ring-indigo-900';
+                }
+
+                const btn = document.createElement('button');
+                btn.className = `h-9 w-full rounded-lg border text-xs flex items-center justify-center transition ${bgStyle}`;
+                btn.innerText = idx + 1;
+                btn.onclick = () => jumpToQuestion(idx);
+                grid.appendChild(btn);
+            });
+        }
+
+        function filterPalette(filter) {
+            activeFilter = filter;
+            renderPalette();
+        }
+
+        function updateAnsweredCount() {
+            const count = userAnswers.filter(a => a !== null).length;
+            document.getElementById('answered-count').innerText = count;
+        }
+
+        // Modal Confirmation Logic
+        function openConfirmModal() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            const confirmText = document.getElementById('confirm-modal-text');
+            if (unanswered > 0) {
+                confirmText.innerHTML = `Masih ada <b class="text-rose-600 font-bold">${unanswered} soal</b> yang belum dijawab!<br>Apakah Anda yakin ingin menyelesaikan ujian sekarang?`;
+            } else {
+                confirmText.innerHTML = `Semua 100 soal telah dijawab.<br>Apakah Anda yakin ingin mengakhiri ujian dan melihat skor akhir?`;
+            }
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+        }
+
+        function executeSubmitQuiz() {
+            closeConfirmModal();
+            document.getElementById('timeup-modal').classList.add('hidden');
+            submitQuiz();
+        }
+
+        // Submission & Detailed Answer Evaluation
+        function submitQuiz() {
+            isSubmitted = true;
+            clearInterval(timerInterval);
+
+            let scorePG = 0;
+            let scoreKompleks = 0;
+            let scoreBS = 0;
+            let totalCorrect = 0;
+
+            questionsData.forEach((q, idx) => {
+                const uAns = userAnswers[idx];
+                const isCorrect = checkIsQuestionCorrect(q, uAns);
+                if (isCorrect) {
+                    totalCorrect++;
+                    if (q.type === 'single') scorePG++;
+                    else if (q.type === 'complex') scoreKompleks++;
+                    else if (q.type === 'tf') scoreBS++;
+                }
+            });
+
+            const totalScore = Math.round((totalCorrect / questionsData.length) * 100);
+
+            // Populate Modal Summary
+            document.getElementById('score-val').innerText = totalScore;
+            document.getElementById('correct-val').innerText = totalCorrect;
+            document.getElementById('wrong-val').innerText = questionsData.length - totalCorrect;
+            document.getElementById('score-pg').innerText = `${scorePG} / 50`;
+            document.getElementById('score-kompleks').innerText = `${scoreKompleks} / 30`;
+            document.getElementById('score-bs').innerText = `${scoreBS} / 20`;
+
+            // Build Detailed 100 Questions List
+            buildDetailedAnswerSheet();
+
+            document.getElementById('result-modal').classList.remove('hidden');
+            loadQuestion(currentIndex);
+        }
+
+        function switchResultTab(tab) {
+            const btnSummary = document.getElementById('tab-btn-summary');
+            const btnDetail = document.getElementById('tab-btn-detail');
+            const contentSummary = document.getElementById('tab-content-summary');
+            const contentDetail = document.getElementById('tab-content-detail');
+
+            if (tab === 'detail') {
+                btnDetail.className = "pb-2 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600";
+                btnSummary.className = "pb-2 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-indigo-600";
+                contentDetail.classList.remove('hidden');
+                contentSummary.classList.add('hidden');
+            } else {
+                btnSummary.className = "pb-2 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600";
+                btnDetail.className = "pb-2 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-indigo-600";
+                contentSummary.classList.remove('hidden');
+                contentDetail.classList.add('hidden');
+            }
+        }
+
+        function filterDetailResult(filter) {
+            detailFilter = filter;
+            buildDetailedAnswerSheet();
+        }
+
+        function buildDetailedAnswerSheet() {
+            const container = document.getElementById('detailed-answers-list');
+            container.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const uAns = userAnswers[idx];
+                const isCorrect = checkIsQuestionCorrect(q, uAns);
+
+                if (detailFilter === 'correct' && !isCorrect) return;
+                if (detailFilter === 'wrong' && isCorrect) return;
+
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border text-xs flex flex-col md:flex-row md:items-center justify-between gap-2 ${
+                    isCorrect ? 'bg-emerald-50/60 border-emerald-200' : 'bg-rose-50/60 border-rose-200'
+                }`;
+
+                let statusBadge = isCorrect 
+                    ? `<span class="px-2 py-0.5 rounded-full bg-emerald-600 text-white font-bold text-[10px]"><i class="fa-solid fa-check mr-1"></i>BENAR</span>`
+                    : `<span class="px-2 py-0.5 rounded-full bg-rose-600 text-white font-bold text-[10px]"><i class="fa-solid fa-xmark mr-1"></i>SALAH / KOSONG</span>`;
+
+                let userAnsText = 'Belum Dijawab';
+                if (uAns !== null) {
+                    if (q.type === 'complex') {
+                        userAnsText = uAns.map(i => String.fromCharCode(65 + i)).join(', ');
+                    } else {
+                        userAnsText = String.fromCharCode(65 + uAns);
+                    }
+                }
+
+                let keyText = '';
+                if (q.type === 'complex') {
+                    keyText = q.answer.map(i => String.fromCharCode(65 + i)).join(', ');
+                } else {
+                    keyText = String.fromCharCode(65 + q.answer);
+                }
+
+                card.innerHTML = `
+                    <div class="flex items-start space-x-2.5">
+                        <span class="font-bold text-slate-700 bg-white px-2 py-1 rounded border shadow-sm">#${q.id}</span>
+                        <div>
+                            <div class="flex items-center space-x-2 mb-1">
+                                ${statusBadge}
+                                <span class="text-slate-500 text-[11px] font-medium font-mono">${q.typeText}</span>
+                            </div>
+                            <p class="text-slate-800 line-clamp-1 font-medium">${q.question}</p>
+                            <div class="mt-1 text-slate-600 space-x-3">
+                                <span>Jawaban Kamu: <b class="${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">${userAnsText}</b></span>
+                                <span>Kunci: <b class="text-indigo-700">${keyText}</b></span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="jumpToAndReview(${idx})" class="self-end md:self-center px-3 py-1 bg-white hover:bg-slate-100 border text-indigo-700 font-semibold rounded-lg shadow-sm text-xs transition flex flex-shrink-0 items-center">
+                        <i class="fa-solid fa-eye mr-1"></i> Lihat Soal
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function jumpToAndReview(idx) {
+            document.getElementById('result-modal').classList.add('hidden');
+            loadQuestion(idx);
+        }
+
+        function reviewAnswers() {
+            document.getElementById('result-modal').classList.add('hidden');
+            loadQuestion(0);
+        }
+    </script>
+</body>
+</html>
